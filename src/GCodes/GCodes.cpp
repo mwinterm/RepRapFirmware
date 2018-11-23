@@ -526,7 +526,8 @@ void GCodes::RunStateMachine(GCodeBuffer& gb, const StringRef& reply)
 						// went (i.e. the difference between our start and end positions) and if we need to
 						// incorporate any correction factors. That's why we only need to set the final tool
 						// offset to this value in order to finish the tool probing.
-						currentTool->SetOffset(axis, (toolChangeRestorePoint.moveCoords[axis] - currentUserPosition[axis]) + gb.GetFValue(), true);
+						float OldOffset = currentTool->GetOffset(axis);
+						currentTool->SetOffset(axis, gb.GetFValue() - currentUserPosition[axis] + OldOffset, true);
 						break;
 					}
 				}
