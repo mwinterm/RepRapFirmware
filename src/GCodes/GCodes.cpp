@@ -1236,7 +1236,7 @@ void GCodes::RunStateMachine(GCodeBuffer& gb, const StringRef& reply)
 			if (g30ProbePointIndex < 0)											// if no P parameter
 			{
 				// Simple G30 probing move
-				if (g30SValue == -1 || g30SValue == -2)
+				if (g30SValue == -1 || g30SValue == -2 || g30SValue == -3)
 				{
 					// G30 S-1 command taps once and reports the height, S-2 sets the tool offset to the negative of the current height
 					gb.SetState(GCodeState::probingAtPoint7);					// special state for reporting the stopped height at the end
@@ -1356,8 +1356,17 @@ void GCodes::RunStateMachine(GCodeBuffer& gb, const StringRef& reply)
 		break;
 
 	case GCodeState::probingAtPoint7:
-		// Here when we have finished executing G30 S-1 or S-2 including retracting the probe if necessary
-		if (g30SValue == -2)
+		// Here when we have finished executing G30 S-1, S-2 or S-3 including retracting the probe if necessary
+		if (g30SValue == -3)
+		{
+
+			platform.MessageF(LoggedGenericMessage, "currentUserPosition[Z_AXIS]: %.3f \n", (double)currentUserPosition[Z_AXIS]);
+			platform.MessageF(LoggedGenericMessage, "g30zHeightError: %.3f \n", (double)g30zHeightError);
+			platform.MessageF(LoggedGenericMessage, "g30zStoppedHeight: %.3f \n", (double)g30zStoppedHeight);
+			platform.MessageF(LoggedGenericMessage, "workplaceCoordinates[currentCoordinateSystem][Z_AXIS]: %.3f \n", (double)workplaceCoordinates[currentCoordinateSystem][Z_AXIS]);
+			workplaceCoordinates[currentCoordinateSystem][Z_AXIS] = g30zHeightError;
+		}
+		else if (g30SValue == -2)
 		{
 			// Adjust the Z offset of the current tool to account for the height error
 			Tool * const tool = reprap.GetCurrentTool();
@@ -3112,7 +3121,7 @@ GCodeResult GCodes::DoHome(GCodeBuffer& gb, const StringRef& reply)
 // We already own the movement lock before this is called.
 GCodeResult GCodes::ExecuteG30(GCodeBuffer& gb, const StringRef& reply)
 {
-	g30SValue = (gb.Seen('S')) ? gb.GetIValue() : -3;		// S-3 is equivalent to having no S parameter
+	g30SValue = (gb.Seen('S')) ? gb.GetIValue() : -4;		// S-4 is equivalent to having no S parameter
 	if (g30SValue == -2 && reprap.GetCurrentTool() == nullptr)
 	{
 		reply.copy("G30 S-2 commanded with no tool selected");
