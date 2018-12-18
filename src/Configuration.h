@@ -47,6 +47,11 @@ constexpr float DefaultXYInstantDv = 15.0;				// mm/sec
 constexpr float DefaultZInstantDv = 0.2;
 constexpr float DefaultEInstantDv = 2.0;
 
+constexpr float DefaultAxisMinimum = 0.0;
+constexpr float DefaultAxisMaximum = 200.0;
+
+constexpr float MinimumOpenLoadMotorCurrent = 300;		// minimum current in mA for the open load status to be taken seriously
+
 // Timeouts
 constexpr uint32_t FanCheckInterval = 500;				// Milliseconds
 constexpr uint32_t OpenLoadTimeout = 500;				// Milliseconds
@@ -205,20 +210,7 @@ constexpr int DefaultZProbeADValue = 500;				// Default trigger threshold
 constexpr float TRIANGLE_ZERO = -0.001;					// Millimetres
 constexpr float SILLY_Z_VALUE = -9999.0;				// Millimetres
 
-// String lengths
-constexpr size_t FORMAT_STRING_LENGTH = 256;
-constexpr size_t MACHINE_NAME_LENGTH = 40;
-constexpr size_t PASSWORD_LENGTH = 20;					// must also be long enough to hold any homing file name
-
-#if SAM4E || SAM4S || SAME70
-// Increased GCODE_LENGTH on the SAM4 because M587 and M589 commands on the Duet WiFi can get very long
-constexpr size_t GCODE_LENGTH = 161;					// maximum number of non-comment characters in a line of GCode including the null terminator
-constexpr size_t SHORT_GCODE_LENGTH = 61;				// maximum length of a GCode that we can queue to synchronise it to a move
-#else
-constexpr size_t GCODE_LENGTH = 101;					// maximum number of non-comment characters in a line of GCode including the null terminator
-constexpr size_t SHORT_GCODE_LENGTH = 61;				// maximum length of a GCode that we can queue to synchronise it to a move
-#endif
-
+// String lengths. Try not to have too many different ones, because each one causes an instantiation of the String template
 constexpr size_t MaxMessageLength = 256;
 constexpr size_t MaxTitleLength = 61;
 
@@ -232,6 +224,21 @@ constexpr size_t MaxVariableNameLength = 100;
 
 constexpr size_t MaxHeaterNameLength = 20;				// Maximum number of characters in a heater name
 constexpr size_t MaxFanNameLength = 20;					// Maximum number of characters in a fan name
+
+constexpr size_t FormatStringLength = 256;
+constexpr size_t GCodeReplyLength = 256;				// Maximum number of characters in a GCode reply that doesn't use an OutputBuffer
+constexpr size_t MachineNameLength = 40;
+constexpr size_t RepRapPasswordLength = 20;
+constexpr size_t MediumStringLength = MaxFilenameLength;
+
+#if SAM4E || SAM4S || SAME70
+// Increased GCODE_LENGTH on the SAM4 because M587 and M589 commands on the Duet WiFi can get very long
+constexpr size_t GCODE_LENGTH = 161;					// maximum number of non-comment characters in a line of GCode including the null terminator
+constexpr size_t SHORT_GCODE_LENGTH = 61;				// maximum length of a GCode that we can queue to synchronise it to a move
+#else
+constexpr size_t GCODE_LENGTH = 101;					// maximum number of non-comment characters in a line of GCode including the null terminator
+constexpr size_t SHORT_GCODE_LENGTH = 61;				// maximum length of a GCode that we can queue to synchronise it to a move
+#endif
 
 // Output buffer length and number of buffers
 // When using RTOS, it is best if it is possible to fit an HTTP response header in a single buffer. Our headers are currently about 230 bytes long.
@@ -262,7 +269,9 @@ constexpr float DefaultRetractSpeed = 1000.0;			// The default firmware retracti
 constexpr float DefaultRetractLength = 2.0;
 constexpr float MinimumMovementSpeed = 0.5;				// The minimum movement speed (extruding moves will go slower than this if the extrusion rate demands it)
 
-constexpr float DefaultArcSegmentLength = 0.2;			// G2 and G3 arc movement commands get split into segments this long
+constexpr float MaxArcDeviation = 0.02;					// maximum deviation from ideal arc due to segmentation
+constexpr float MinArcSegmentLength = 0.2;				// G2 and G3 arc movement commands get split into segments at least this long
+constexpr float MaxArcSegmentLength = 2.0;				// G2 and G3 arc movement commands get split into segments at most this long
 
 constexpr uint32_t DefaultIdleTimeout = 30000;			// Milliseconds
 constexpr float DefaultIdleCurrentFactor = 0.3;			// Proportion of normal motor current that we use for idle hold
