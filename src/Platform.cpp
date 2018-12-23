@@ -144,6 +144,9 @@ extern "C" void UrgentInit()
 	// The prototype boards don't have a pulldown on LCD_BEEP, which causes a hissing sound from the beeper on the 12864 display until the pin is initialised
 	pinMode(LcdBeepPin, OUTPUT_LOW);
 
+	// Set the 12864 display CS pin low to prevent it from receiving garbage due to other SPI traffic
+	pinMode(LcdCSPin, OUTPUT_LOW);
+
 	// On the prototype boards the stepper driver expansion ports don't have external pullup resistors on their enable pins
 	pinMode(ENABLE_PINS[5], OUTPUT_HIGH);
 	pinMode(ENABLE_PINS[6], OUTPUT_HIGH);
@@ -2588,6 +2591,9 @@ GCodeResult Platform::DiagnosticTest(GCodeBuffer& gb, const StringRef& reply, in
 					(double)(tim2 * 10000)/StepTimer::StepClockRate, (ok2) ? "ok" : "ERROR");
 		}
 		break;
+
+	case (int)DiagnosticTestType::TimeSDWrite:
+		return reprap.GetGCodes().StartSDTiming(gb, reply);
 
 #ifdef DUET_NG
 	case (int)DiagnosticTestType::PrintExpanderStatus:
