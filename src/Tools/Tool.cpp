@@ -411,6 +411,16 @@ void Tool::SetOffset(size_t axis, float offs, bool byProbing)
 	}
 }
 
+float Tool::GetDiameter() const
+{
+	return diameter;
+}
+
+void Tool::SetDiameter(float dia)
+{
+	diameter = dia;
+}
+
 float Tool::GetToolHeaterActiveTemperature(size_t heaterNumber) const
 {
 	return (heaterNumber < heaterCount) ? activeTemperatures[heaterNumber] : 0.0;

@@ -53,7 +53,7 @@ constexpr float DefaultAxisMaximum = 200.0;
 constexpr float MinimumOpenLoadMotorCurrent = 300;		// minimum current in mA for the open load status to be taken seriously
 
 // Timeouts
-constexpr uint32_t FanCheckInterval = 500;				// Milliseconds
+constexpr uint32_t FanCheckInterval = 3000;				// Milliseconds
 constexpr uint32_t OpenLoadTimeout = 500;				// Milliseconds
 constexpr uint32_t MinimumWarningInterval = 4000;		// Milliseconds, must be at least as long as FanCheckInterval
 constexpr uint32_t LogFlushInterval = 15000;			// Milliseconds

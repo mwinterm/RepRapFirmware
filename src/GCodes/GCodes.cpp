@@ -3570,6 +3570,11 @@ GCodeResult GCodes::SetOrReportOffsets(GCodeBuffer &gb, const StringRef& reply)
 				}
 			}
 		}
+		if (gb.Seen('D'))
+		{
+			float toolDiameter = gb.GetFValue();
+			tool->SetDiameter(toolDiameter);
+		}
 	}
 
 	if (!settingOffset && !settingTemps)
@@ -3580,6 +3585,8 @@ GCodeResult GCodes::SetOrReportOffsets(GCodeBuffer &gb, const StringRef& reply)
 		{
 			reply.catf(" %c%.2f", axisLetters[axis], (double)tool->GetOffset(axis));
 		}
+		reply.cat(", diameter:");
+		reply.catf(" %c%.2f", 'D', (double)tool->GetDiameter());
 		if (hCount != 0)
 		{
 			reply.cat(", active/standby temperature(s):");

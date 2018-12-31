@@ -50,6 +50,8 @@ public:
 
 	float GetOffset(size_t axis) const pre(axis < MaxAxes);
 	void SetOffset(size_t axis, float offs, bool byProbing) pre(axis < MaxAxes);
+	float GetDiameter() const;
+	void SetDiameter(float dia);
 	AxesBitmap GetAxisOffsetsProbed() const { return axisOffsetsProbed; }
 	size_t DriveCount() const;
 	int Drive(size_t driveNumber) const;
@@ -100,6 +102,7 @@ private:
 	Filament *filament;
 	char *name;
 	float offset[MaxAxes];
+	float diameter;
 	float mix[MaxExtruders];
 	float activeTemperatures[NumHeaters];
 	float standbyTemperatures[NumHeaters];
